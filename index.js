@@ -1,4 +1,4 @@
-const { obtenerPosts, agregarPost } = require("./consultas.js"); //Importamos las funciones del archivo consultas.js
+const { obtenerPosts, agregarPost, agregarLike, borrarPost } = require("./consultas.js"); //Importamos las funciones del archivo consultas.js
 const express = require("express"); //Importamos el paquete express
 const cors = require("cors"); //Importamos el paquete cors
 const app = express(); //Asignamos la instancia de express a la constante app
@@ -31,8 +31,34 @@ app.post("/posts", async (req, res) => {
   try {
     //Se usa try catch para manejar los errores
     const { titulo, url, descripcion } = req.body; //Capturamos los datos enviados en el body desde el frontend
-    await agregarPost(titulo, url, descripcion); //Llamamos la función agregarPost con los datos extraídos del body como argumentos
-    res.status(201).send("Post agregado con éxito"); //Respuesta al frontend si el post se agregó correctamente
+    const nuevoPost = await agregarPost(titulo, url, descripcion); //Llamamos la función agregarPost con los datos extraídos del body como argumentos
+    res.status(201).json(nuevoPost); //Respuesta al frontend con mensaje 201 y el post agregado en formato json
+  } catch (error) {
+    //Capturamos el error
+    console.log(error); //Mostramos el error en consola
+    return res.status(500).json({ message: "Internal server error" }); //Respondemos al frontend con el mensaje 500 y un mensaje en formato JSON
+  }
+});
+
+//Ruta asíncrona para modificar posts (agregar likes)
+app.put("/posts/like/:id", async (req, res) => {
+  try {
+    const { id } = req.params; //Capturamos el ID del post mediante req.params
+    const nuevoLike = await agregarLike(id); //Llamamos la función enviando el ID como parámetro
+    res.status(201).json(nuevoLike); //Respuesta al frontend con mensaje 201 y el post agregado en formato json
+  } catch (error) {
+    //Capturamos el error
+    console.log(error); //Mostramos el error en consola
+    return res.status(500).json({ message: "Internal server error" }); //Respondemos al frontend con el mensaje 500 y un mensaje en formato JSON
+  }
+});
+
+//Ruta asíncrona para borrar posts
+app.delete("/posts/:id", async (req, res) => {
+  try {
+    const { id } = req.params; //Capturamos el ID del post mediante req.params
+    await borrarPost(id); //Llamamos la función enviando el ID como parámetro
+    res.status(200).json({ message: "Viaje eliminado con éxito" }); //Respuesta al frontend con mensaje 200 y mensaje en formato JSON
   } catch (error) {
     //Capturamos el error
     console.log(error); //Mostramos el error en consola
