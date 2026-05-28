@@ -58,7 +58,7 @@ app.delete("/posts/:id", async (req, res) => {
   try {
     const { id } = req.params; //Capturamos el ID del post mediante req.params
     await borrarPost(id); //Llamamos la función enviando el ID como parámetro
-    res.status(200).json({ message: "Viaje eliminado con éxito" }); //Respuesta al frontend con mensaje 200 y mensaje en formato JSON
+    res.status(200).json({ message: "Post eliminado con éxito" }); //Respuesta al frontend con mensaje 200 y mensaje en formato JSON
   } catch (error) {
     //Capturamos el error
     console.log(error); //Mostramos el error en consola
